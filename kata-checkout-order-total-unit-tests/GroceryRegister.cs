@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using katacheckoutordertotalapi.API;
+using katacheckoutordertotalapi.BLL;
+using katacheckoutordertotalapi.DATA;
 using katacheckoutordertotalapi.Models;
 using Moq;
 using NUnit.Framework;
@@ -90,6 +92,28 @@ namespace Tests
                 .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier && x.WeightInPounds == itemToScan.WeightInPounds)
                 .ToList()
                 .Count == numberOfDuplicates - 1);
+        }
+
+        [Test]
+        public async Task VerifyPricingStaysUpdated()
+        {
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanOreos = new Item() { ItemIdentifier = "oreos" };
+            var itemToScanPaper = new Item() { ItemIdentifier = "paper" };
+            var itemToScanGroundBeef = new Item() { ItemIdentifier = "groundbeef", WeightInPounds = 2.3M };
+
+            var oreoStorePrice = costs.UniqueStoreItems[itemToScanOreos.ItemIdentifier].Price;
+            var paperStorePrice = costs.UniqueStoreItems[itemToScanPaper.ItemIdentifier].Price;
+            var groundBeefStorePrice = costs.UniqueStoreItems[itemToScanGroundBeef.ItemIdentifier].Price;
+
+            costs.CurrentRegisterLineItems.Add(itemToScanOreos);
+            costs.CurrentRegisterLineItems.Add(itemToScanPaper);
+            await groceryRegisterBll.RecalculateRegisterValue();
+            Assert.IsTrue(costs.TotalRegisterValue == oreoStorePrice + paperStorePrice);
+            costs.CurrentRegisterLineItems.Add(itemToScanGroundBeef);
+            await groceryRegisterBll.RecalculateRegisterValue();
+            Assert.IsTrue(costs.TotalRegisterValue == (oreoStorePrice + paperStorePrice) + (itemToScanGroundBeef.WeightInPounds * groundBeefStorePrice));
         }
     }
 }

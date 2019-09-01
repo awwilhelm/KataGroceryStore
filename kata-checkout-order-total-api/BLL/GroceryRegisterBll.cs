@@ -59,23 +59,21 @@ namespace katacheckoutordertotalapi.BLL
             return costs.CurrentRegisterLineItems;
         }
 
-        private async Task RecalculateRegisterValue()
+        public async Task RecalculateRegisterValue()
         {
-            await Task.Run(() => { 
-                decimal newCost = 0M;
-                foreach(var item in costs.CurrentRegisterLineItems)
+            decimal newCost = 0M;
+            foreach(var item in costs.CurrentRegisterLineItems)
+            {
+                var storeItem = costs.UniqueStoreItems[item.ItemIdentifier];
+                if(storeItem.StoreItemPriceType == StoreItemPriceType.perItem)
                 {
-                    var storeItem = costs.UniqueStoreItems[item.ItemIdentifier];
-                    if(storeItem.StoreItemPriceType == StoreItemPriceType.perItem)
-                    {
-                        newCost += storeItem.Price;
-                    } else if(storeItem.StoreItemPriceType == StoreItemPriceType.perPound)
-                    {
-                        newCost += (storeItem.Price * item.WeightInPounds ?? 0);
-                    }
+                    newCost += storeItem.Price;
+                } else if(storeItem.StoreItemPriceType == StoreItemPriceType.perPound)
+                {
+                    newCost += (storeItem.Price * item.WeightInPounds ?? 0);
                 }
-                costs.RegisterValueWithoutDiscount = newCost;
-            });
+            }
+            costs.RegisterValueWithoutDiscount = newCost;
         }
     }
 }
