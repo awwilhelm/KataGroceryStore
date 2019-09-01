@@ -86,7 +86,7 @@ namespace Tests
             Assert.IsTrue(isRemovalSuccessful);
             currentLineItems = await groceryRegister.GetRegisterLineItems();
             Assert.IsTrue((currentLineItems).Count == 0);
-            Assert.IsFalse(currentLineItems
+            Assert.IsTrue(currentLineItems
                 .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier && x.WeightInPounds == itemToScan.WeightInPounds)
                 .ToList()
                 .Count == numberOfDuplicates - 1);

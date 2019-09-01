@@ -21,7 +21,7 @@ namespace katacheckoutordertotalapi.API
 
         public async Task<bool> RemoveItem(Item item)
         {
-            return await Task.Run(() => { return false; });
+            return await groceryRegisterBll.RemoveItem(item);
         }
 
         public async Task<List<Item>> GetRegisterLineItems()

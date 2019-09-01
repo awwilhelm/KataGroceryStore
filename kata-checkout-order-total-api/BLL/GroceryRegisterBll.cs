@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using katacheckoutordertotalapi.DATA;
 using katacheckoutordertotalapi.Models;
@@ -34,7 +35,23 @@ namespace katacheckoutordertotalapi.BLL
 
         public async Task<bool> RemoveItem(Item item)
         {
-            return await Task.Run(() => { return false; });
+            if (!costs.CurrentRegisterLineItems.Any(x => x.ItemIdentifier == item.ItemIdentifier))
+            {
+                return false;
+            }
+
+            if(item.WeightInPounds != null && !costs.CurrentRegisterLineItems.Any(x => x.ItemIdentifier == item.ItemIdentifier
+                && x.WeightInPounds == item.WeightInPounds))
+            {
+                return false;
+            }
+
+            var firstOccurenceIndex = costs.CurrentRegisterLineItems.IndexOf(item);
+
+            costs.CurrentRegisterLineItems.RemoveAt(firstOccurenceIndex);
+            await RecalculateRegisterValue();
+
+            return true;
         }
 
         public async Task<List<Item>> GetRegisterLineItems()
