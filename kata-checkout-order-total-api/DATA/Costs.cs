@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using katacheckoutordertotalapi.Models;
 
 namespace katacheckoutordertotalapi.DATA
 {
     public class Costs
     {
-        public static decimal TotalRegisterValue
+        public decimal TotalRegisterValue
         { 
             get
             {
                 return RegisterValueWithoutDiscount - DiscountValue;
             }
         }
-        private static decimal RegisterValueWithoutDiscount { get; set; }
-        private static decimal DiscountValue { get; set; }
+        public List<Item> CurrentRegisterLineItems { get; set; } = new List<Item>();
+        public decimal RegisterValueWithoutDiscount { get; set; }
+        public decimal DiscountValue { get; set; }
 
         public Dictionary<string, StoreItem> UniqueStoreItems = new Dictionary<string, StoreItem>()
         {

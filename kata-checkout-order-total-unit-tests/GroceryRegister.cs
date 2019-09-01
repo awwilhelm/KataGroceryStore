@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,13 +21,13 @@ namespace Tests
         [Test]
         public async Task AcceptAScannedItem()
         {
-            var itemName = "oreo";
+            var itemToScan = new Item() { ItemIdentifier = "oreos" };
 
             Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Count == 0);
-            var isScanSuccessful = await groceryRegister.ScanItem(itemName);
+            var isScanSuccessful = await groceryRegister.ScanItem(itemToScan);
             Assert.IsTrue(isScanSuccessful);
             Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Count == 1);
-            Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Where(x => x.Name == itemName)
+            Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier)
                 .ToList()
                 .Count == 1);
         }
@@ -34,15 +35,16 @@ namespace Tests
         [Test]
         public async Task AcceptAScannedItemWithWeight()
         {
-            var itemName = "groundbeef";
-            var itemWeightInPounds = 1.34M;
+            var itemToScan = new Item() { ItemIdentifier = "groundbeef", WeightInPounds = 1.34M };
+            Console.WriteLine("hello");
+            Console.WriteLine(await groceryRegister.GetRegisterLineItems());
 
             Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Count == 0);
-            var isScanSuccessful = await groceryRegister.ScanItem(itemName, itemWeightInPounds);
+            var isScanSuccessful = await groceryRegister.ScanItem(itemToScan);
             Assert.IsTrue(isScanSuccessful);
             Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Count == 1);
             Assert.IsTrue((await groceryRegister.GetRegisterLineItems())
-                .Where(x => x.Name == itemName && x.WeightInPounds == itemWeightInPounds)
+                .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier && x.WeightInPounds == itemToScan.WeightInPounds)
                 .ToList()
                 .Count == 1);
         }
@@ -50,20 +52,20 @@ namespace Tests
         [Test]
         public async Task RemoveAScannedItem()
         {
-            var itemName = "oreo";
-            await groceryRegister.ScanItem(itemName);
+            var itemToScan = new Item() { ItemIdentifier = "oreos" };
+            await groceryRegister.ScanItem(itemToScan);
             var currentLineItems = await groceryRegister.GetRegisterLineItems();
 
             Assert.IsTrue(currentLineItems.Count == 1);
             var numberOfDuplicates = currentLineItems
-                .Where(x => x.Name == itemName)
+                .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier)
                 .ToList()
                 .Count;
-            var isRemovalSuccessful = await groceryRegister.RemoveItem(itemName);
+            var isRemovalSuccessful = await groceryRegister.RemoveItem(itemToScan);
             Assert.IsTrue(isRemovalSuccessful);
             Assert.IsTrue((await groceryRegister.GetRegisterLineItems()).Count == 0);
             Assert.IsTrue(currentLineItems
-                .Where(x => x.Name == itemName)
+                .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier)
                 .ToList()
                 .Count == numberOfDuplicates - 1);
         }
@@ -71,22 +73,21 @@ namespace Tests
         [Test]
         public async Task RemoveAScannedItemWithWeight()
         {
-            var itemName = "oreo";
-            var itemWeightInPounds = 1.34M;
-            await groceryRegister.ScanItem(itemName, itemWeightInPounds);
+            var itemToScan = new Item() { ItemIdentifier = "groundbeef", WeightInPounds = 1.34M };
+            await groceryRegister.ScanItem(itemToScan);
 
             var currentLineItems = await groceryRegister.GetRegisterLineItems();
             Assert.IsTrue((currentLineItems).Count == 1);
             var numberOfDuplicates = currentLineItems
-                .Where(x => x.Name == itemName && x.WeightInPounds == itemWeightInPounds)
+                .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier && x.WeightInPounds == itemToScan.WeightInPounds)
                 .ToList()
                 .Count;
-            var isRemovalSuccessful = await groceryRegister.RemoveItem(itemName, itemWeightInPounds);
+            var isRemovalSuccessful = await groceryRegister.RemoveItem(itemToScan);
             Assert.IsTrue(isRemovalSuccessful);
             currentLineItems = await groceryRegister.GetRegisterLineItems();
             Assert.IsTrue((currentLineItems).Count == 0);
             Assert.IsFalse(currentLineItems
-                .Where(x => x.Name == itemName && x.WeightInPounds == itemWeightInPounds)
+                .Where(x => x.ItemIdentifier == itemToScan.ItemIdentifier && x.WeightInPounds == itemToScan.WeightInPounds)
                 .ToList()
                 .Count == numberOfDuplicates - 1);
         }

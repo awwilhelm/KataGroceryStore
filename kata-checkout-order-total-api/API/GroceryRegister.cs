@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using katacheckoutordertotalapi.BLL;
 using katacheckoutordertotalapi.Models;
 
 namespace katacheckoutordertotalapi.API
 {
     public class GroceryRegister
     {
+        public GroceryRegisterBll groceryRegisterBll;
         public GroceryRegister()
         {
+            groceryRegisterBll = new GroceryRegisterBll();
         }
 
-        public Task<bool> ScanItem(string itemIdentifier, decimal weight = -1)
+        public async Task<bool> ScanItem(Item item)
         {
-            return Task.Run(()=> { return false; });
+            return await groceryRegisterBll.AddItem(item);
         }
 
-
-        public Task<bool> RemoveItem(string itemIdentifier, decimal weight = -1)
+        public async Task<bool> RemoveItem(Item item)
         {
-            return Task.Run(() => { return false; });
+            return await Task.Run(() => { return false; });
         }
 
-        public Task<List<Item>> GetRegisterLineItems()
+        public async Task<List<Item>> GetRegisterLineItems()
         {
-            return Task.Run(() => { return new List<Item>(); }); 
+            return await groceryRegisterBll.GetRegisterLineItems();
         }
     }
 }
