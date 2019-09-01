@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kata-checkout-order-total", "kata-checkout-order-total\kata-checkout-order-total.csproj", "{CA5B1A4C-349D-47F7-918E-0B596A124E78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kata-checkout-order-total-unit-tests", "kata-checkout-order-total-unit-tests\kata-checkout-order-total-unit-tests.csproj", "{AC404518-BFCF-4D94-A6C3-04BB77C03699}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kata-checkout-order-total-api", "kata-checkout-order-total-api\kata-checkout-order-total-api.csproj", "{D096D27C-40AA-4CB0-B466-F7114798BE0B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE9505D4-00FB-4202-A0AE-D07D1619BA2C}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA5B1A4C-349D-47F7-918E-0B596A124E78}.Debug|x86.ActiveCfg = Debug|x86
+		{CA5B1A4C-349D-47F7-918E-0B596A124E78}.Debug|x86.Build.0 = Debug|x86
+		{CA5B1A4C-349D-47F7-918E-0B596A124E78}.Release|x86.ActiveCfg = Release|x86
+		{CA5B1A4C-349D-47F7-918E-0B596A124E78}.Release|x86.Build.0 = Release|x86
+		{AC404518-BFCF-4D94-A6C3-04BB77C03699}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AC404518-BFCF-4D94-A6C3-04BB77C03699}.Debug|x86.Build.0 = Debug|Any CPU
+		{AC404518-BFCF-4D94-A6C3-04BB77C03699}.Release|x86.ActiveCfg = Release|Any CPU
+		{AC404518-BFCF-4D94-A6C3-04BB77C03699}.Release|x86.Build.0 = Release|Any CPU
+		{D096D27C-40AA-4CB0-B466-F7114798BE0B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D096D27C-40AA-4CB0-B466-F7114798BE0B}.Debug|x86.Build.0 = Debug|Any CPU
+		{D096D27C-40AA-4CB0-B466-F7114798BE0B}.Release|x86.ActiveCfg = Release|Any CPU
+		{D096D27C-40AA-4CB0-B466-F7114798BE0B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
