@@ -78,7 +78,39 @@ namespace katacheckoutordertotalapi.BLL
 
         public async Task CalculateDiscount()
         {
-            await Task.Run(() => { });
+            decimal newDiscount = 0M;
+            foreach(var discount in costs.ItemDiscounts)
+            {
+                var lineItemsForDiscount = costs.CurrentRegisterLineItems
+                    .Where(x => x.ItemIdentifier == discount.ItemIdentifier).ToList();
+
+                if (lineItemsForDiscount.Count > 0)
+                {
+                    var numberOfDiscountReuse = (int)lineItemsForDiscount.Count / discount.QuantityForDeal;
+                    var storeItem = costs.UniqueStoreItems[discount.ItemIdentifier];
+                    var numberOfUsesWithLimit = -1;
+                    if (discount.QuantityLimit != null)
+                    {
+                        numberOfUsesWithLimit = (int)((discount.QuantityLimit ?? 1) / discount.QuantityForDeal);
+                    }
+
+                    if (numberOfUsesWithLimit != -1 && numberOfDiscountReuse > numberOfUsesWithLimit)
+                    {
+                        numberOfDiscountReuse = numberOfUsesWithLimit;
+                    }
+
+                    if (discount.PriceModifier != null)
+                    {
+                        newDiscount += (discount.PriceModifier ?? 0) * storeItem.Price * numberOfDiscountReuse;
+                    }
+                    else if (discount.FlatRate != null)
+                    {
+                        var priceOfSavings = storeItem.Price * discount.QuantityForDeal - discount.FlatRate;
+                        newDiscount += (priceOfSavings ?? 0) * numberOfDiscountReuse;
+                    }
+                }
+            }
+            costs.DiscountValue = newDiscount;
         }
     }
 }

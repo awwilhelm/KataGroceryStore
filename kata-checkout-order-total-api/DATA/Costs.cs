@@ -17,7 +17,7 @@ namespace katacheckoutordertotalapi.DATA
         public decimal RegisterValueWithoutDiscount { get; set; }
         public decimal DiscountValue { get; set; }
 
-        public List<ItemDiscount> itemDiscounts = new List<ItemDiscount>()
+        public List<ItemDiscount> ItemDiscounts = new List<ItemDiscount>()
         {
             new ItemDiscount()
             {

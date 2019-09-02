@@ -124,7 +124,7 @@ namespace Tests
             var costs = groceryRegisterBll.costs;
             var itemToScanPen = new Item() { ItemIdentifier = "pen" };
             var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
-            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+            var itemDiscount = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
                 .FirstOrDefault();
 
             for(var i = 0; i < itemDiscount.QuantityForDeal - 1; i++)
@@ -147,9 +147,9 @@ namespace Tests
             var itemToScanOreos = new Item() { ItemIdentifier = "oreos" };
             var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
             var oreoStorePrice = costs.UniqueStoreItems[itemToScanOreos.ItemIdentifier].Price;
-            var itemDiscountPen = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+            var itemDiscountPen = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
                 .FirstOrDefault();
-            var itemDiscountOreos = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanOreos.ItemIdentifier)
+            var itemDiscountOreos = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanOreos.ItemIdentifier)
                 .FirstOrDefault();
 
             for (var i = 0; i < itemDiscountPen.QuantityForDeal - 1; i++)
@@ -160,7 +160,7 @@ namespace Tests
             }
             for (var i = 0; i < itemDiscountOreos.QuantityForDeal - 1; i++)
             {
-                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+                costs.CurrentRegisterLineItems.Add(itemToScanOreos);
                 await groceryRegisterBll.CalculateDiscount();
                 Assert.IsTrue(costs.DiscountValue == 0);
             }
@@ -179,7 +179,7 @@ namespace Tests
             var costs = groceryRegisterBll.costs;
             var itemToScanPen = new Item() { ItemIdentifier = "pen" };
             var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
-            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+            var itemDiscount = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
                 .FirstOrDefault();
 
             for (var i = 0; i < itemDiscount.QuantityForDeal - 1; i++)
@@ -203,7 +203,7 @@ namespace Tests
             var costs = groceryRegisterBll.costs;
             var itemToScanBelt = new Item() { ItemIdentifier = "belt" };
             var beltStorePrice = costs.UniqueStoreItems[itemToScanBelt.ItemIdentifier].Price;
-            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanBelt.ItemIdentifier)
+            var itemDiscount = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanBelt.ItemIdentifier)
                 .FirstOrDefault();
 
             for (var i = 0; i < itemDiscount.QuantityForDeal - 1; i++)
@@ -214,7 +214,8 @@ namespace Tests
             }
             costs.CurrentRegisterLineItems.Add(itemToScanBelt);
             await groceryRegisterBll.CalculateDiscount();
-            Assert.IsTrue(costs.DiscountValue == itemDiscount.FlatRate);
+            var priceOfSavings = beltStorePrice*itemDiscount.QuantityForDeal - itemDiscount.FlatRate;
+            Assert.IsTrue(costs.DiscountValue == priceOfSavings);
         }
 
         [Test]
@@ -224,14 +225,13 @@ namespace Tests
             var costs = groceryRegisterBll.costs;
             var itemToScanPen = new Item() { ItemIdentifier = "pen" };
             var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
-            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+            var itemDiscount = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
                 .FirstOrDefault();
 
             for (var i = 0; i < itemDiscount.QuantityLimit - 1; i++)
             {
                 costs.CurrentRegisterLineItems.Add(itemToScanPen);
                 await groceryRegisterBll.CalculateDiscount();
-                Assert.IsTrue(costs.DiscountValue == 0);
             }
             costs.CurrentRegisterLineItems.Add(itemToScanPen);
             await groceryRegisterBll.CalculateDiscount();
