@@ -250,14 +250,23 @@ namespace Tests
         [Test]
         public async Task PercentDiscountWithWeight()
         {
-            Assert.IsTrue(false);
-        }
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanBanana = new Item() { ItemIdentifier = "banana", WeightInPounds = 0.9M };
+            var bananaStorePrice = costs.UniqueStoreItems[itemToScanBanana.ItemIdentifier].Price;
+            var itemDiscount = costs.ItemDiscounts.Where(x => x.ItemIdentifier == itemToScanBanana.ItemIdentifier)
+                .FirstOrDefault();
 
-        [Test]
-        public async Task AddingMultipleWeightsOfTheSameShouldJoinIntoOneOnItemizedList()
-        {
-            Assert.IsTrue(false);
-        }
+            for (var i = 0; i < Decimal.Ceiling(itemDiscount.QuantityForDeal/(itemToScanBanana.WeightInPounds??0) - 1); i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanBanana);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            costs.CurrentRegisterLineItems.Add(itemToScanBanana);
+            await groceryRegisterBll.CalculateDiscount();
 
+            Assert.IsTrue(costs.DiscountValue == bananaStorePrice * itemDiscount.PriceModifier);
+        }
     }
 }

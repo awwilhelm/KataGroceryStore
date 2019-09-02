@@ -27,7 +27,9 @@ namespace katacheckoutordertotalapi.BLL
                 return false;
             }
 
+
             costs.CurrentRegisterLineItems.Add(item);
+
             await RecalculateRegisterValue();
 
             return true;
@@ -47,8 +49,8 @@ namespace katacheckoutordertotalapi.BLL
             }
 
             var firstOccurenceIndex = costs.CurrentRegisterLineItems.IndexOf(item);
-
             costs.CurrentRegisterLineItems.RemoveAt(firstOccurenceIndex);
+
             await RecalculateRegisterValue();
 
             return true;
@@ -86,9 +88,21 @@ namespace katacheckoutordertotalapi.BLL
 
                 if (lineItemsForDiscount.Count > 0)
                 {
-                    var numberOfDiscountReuse = (int)lineItemsForDiscount.Count / discount.QuantityForDeal;
                     var storeItem = costs.UniqueStoreItems[discount.ItemIdentifier];
+                    int numberOfDiscountReuse = 0;
+
+                    if(storeItem.StoreItemPriceType == StoreItemPriceType.perItem)
+                    {
+                        numberOfDiscountReuse = (int)(lineItemsForDiscount.Count / discount.QuantityForDeal);
+                    } else if(storeItem.StoreItemPriceType == StoreItemPriceType.perPound)
+                    {
+                        numberOfDiscountReuse = (int)(lineItemsForDiscount
+                            .Where(x=>x.ItemIdentifier == discount.ItemIdentifier)
+                            .Sum(x=>x.WeightInPounds) / discount.QuantityForDeal);
+                    }
+
                     var numberOfUsesWithLimit = -1;
+
                     if (discount.QuantityLimit != null)
                     {
                         numberOfUsesWithLimit = (int)((discount.QuantityLimit ?? 1) / discount.QuantityForDeal);
