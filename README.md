@@ -13,6 +13,9 @@ or multiple.  I am assuming that it is only one transaction and to start a new o
 the app.
 8. I made the assumption you can only scan one item at a time and not three apples, but if there is a
 special for three apples, it will apply when the third one is scanned
+9. I haven't seen any requirements on supporting a product to have more than one markdown at a time so I will
+not be supporting that.  I will be supporting multiple markdowns on separate products though (even though it didn't
+specify this, it makes sense to implement)
 
 
 ## Notes along the way
@@ -28,3 +31,12 @@ having a completed product at each iteration so that if I don't have enough time
 passing the raw error 
 
 4. Since there are no ids it is sometimes impossible to remove the exact one you want to remove, except when there is weight
+
+5. Just because there are "best practices" doesn't mean there are "always follow best practices".  I like to follow
+the approach where you make the simpliest product and refactor as the size increases.  I find a lot of OO methodolgies
+don't always make sense in small projects like this.  The benefit of ditching some of those best practices makes
+my code easy to follow and less files to jump around. (Note: It does get unmanagible when you scale the size of this
+project)
+
+6. Not exactly sure what this means "Markdown prices must always be used in favor of the per-unit price during the sale.
+There are laws protecting the customer from false advertising."

@@ -75,5 +75,10 @@ namespace katacheckoutordertotalapi.BLL
             }
             costs.RegisterValueWithoutDiscount = newCost;
         }
+
+        public async Task CalculateDiscount()
+        {
+            await Task.Run(() => { });
+        }
     }
 }

@@ -110,10 +110,154 @@ namespace Tests
             costs.CurrentRegisterLineItems.Add(itemToScanOreos);
             costs.CurrentRegisterLineItems.Add(itemToScanPaper);
             await groceryRegisterBll.RecalculateRegisterValue();
-            Assert.IsTrue(costs.TotalRegisterValue == oreoStorePrice + paperStorePrice);
+            Assert.IsTrue(costs.RegisterValueWithoutDiscount == oreoStorePrice + paperStorePrice);
             costs.CurrentRegisterLineItems.Add(itemToScanGroundBeef);
             await groceryRegisterBll.RecalculateRegisterValue();
-            Assert.IsTrue(costs.TotalRegisterValue == (oreoStorePrice + paperStorePrice) + (itemToScanGroundBeef.WeightInPounds * groundBeefStorePrice));
+            Assert.IsTrue(costs.RegisterValueWithoutDiscount == (oreoStorePrice + paperStorePrice)
+                + (itemToScanGroundBeef.WeightInPounds * groundBeefStorePrice));
         }
+
+        [Test]
+        public async Task OneDiscountActive()
+        {
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanPen = new Item() { ItemIdentifier = "pen" };
+            var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
+            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+                .FirstOrDefault();
+
+            for(var i = 0; i < itemDiscount.QuantityForDeal - 1; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            costs.CurrentRegisterLineItems.Add(itemToScanPen);
+            await groceryRegisterBll.CalculateDiscount();
+            Assert.IsTrue(costs.DiscountValue == itemDiscount.PriceModifier * penStorePrice);
+        }
+
+        [Test]
+        public async Task MultipleDiscountActive()
+        {
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanPen = new Item() { ItemIdentifier = "pen" };
+            var itemToScanOreos = new Item() { ItemIdentifier = "oreos" };
+            var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
+            var oreoStorePrice = costs.UniqueStoreItems[itemToScanOreos.ItemIdentifier].Price;
+            var itemDiscountPen = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+                .FirstOrDefault();
+            var itemDiscountOreos = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanOreos.ItemIdentifier)
+                .FirstOrDefault();
+
+            for (var i = 0; i < itemDiscountPen.QuantityForDeal - 1; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            for (var i = 0; i < itemDiscountOreos.QuantityForDeal - 1; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            costs.CurrentRegisterLineItems.Add(itemToScanPen);
+            costs.CurrentRegisterLineItems.Add(itemToScanOreos);
+
+            await groceryRegisterBll.CalculateDiscount();
+            Assert.IsTrue(costs.DiscountValue == (itemDiscountPen.PriceModifier * penStorePrice)
+                + (itemDiscountOreos.PriceModifier * oreoStorePrice));
+        }
+
+        [Test]
+        public async Task DiscountIsActiveUntilRemoveProduct()
+        {
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanPen = new Item() { ItemIdentifier = "pen" };
+            var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
+            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+                .FirstOrDefault();
+
+            for (var i = 0; i < itemDiscount.QuantityForDeal - 1; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            costs.CurrentRegisterLineItems.Add(itemToScanPen);
+            await groceryRegisterBll.CalculateDiscount();
+            Assert.IsTrue(costs.DiscountValue == itemDiscount.PriceModifier * penStorePrice);
+            costs.CurrentRegisterLineItems.Remove(itemToScanPen);
+            await groceryRegisterBll.CalculateDiscount();
+            Assert.IsTrue(costs.DiscountValue == 0);
+        }
+
+        [Test]
+        public async Task BuyNForXDollarsDiscount()
+        {
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanBelt = new Item() { ItemIdentifier = "belt" };
+            var beltStorePrice = costs.UniqueStoreItems[itemToScanBelt.ItemIdentifier].Price;
+            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanBelt.ItemIdentifier)
+                .FirstOrDefault();
+
+            for (var i = 0; i < itemDiscount.QuantityForDeal - 1; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanBelt);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            costs.CurrentRegisterLineItems.Add(itemToScanBelt);
+            await groceryRegisterBll.CalculateDiscount();
+            Assert.IsTrue(costs.DiscountValue == itemDiscount.FlatRate);
+        }
+
+        [Test]
+        public async Task OneDiscountWithLimit()
+        {
+            var groceryRegisterBll = groceryRegister.groceryRegisterBll;
+            var costs = groceryRegisterBll.costs;
+            var itemToScanPen = new Item() { ItemIdentifier = "pen" };
+            var penStorePrice = costs.UniqueStoreItems[itemToScanPen.ItemIdentifier].Price;
+            var itemDiscount = costs.itemDiscounts.Where(x => x.ItemIdentifier == itemToScanPen.ItemIdentifier)
+                .FirstOrDefault();
+
+            for (var i = 0; i < itemDiscount.QuantityLimit - 1; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+                await groceryRegisterBll.CalculateDiscount();
+                Assert.IsTrue(costs.DiscountValue == 0);
+            }
+            costs.CurrentRegisterLineItems.Add(itemToScanPen);
+            await groceryRegisterBll.CalculateDiscount();
+
+            var numberOfDeals = (int)(itemDiscount.QuantityLimit / itemDiscount.QuantityForDeal);
+            Assert.IsTrue(costs.DiscountValue == (itemDiscount.PriceModifier * penStorePrice) * numberOfDeals);
+
+            for (var i = 0; i < itemDiscount.QuantityForDeal; i++)
+            {
+                costs.CurrentRegisterLineItems.Add(itemToScanPen);
+            }
+            await groceryRegisterBll.CalculateDiscount();
+            Assert.IsTrue(costs.DiscountValue == (itemDiscount.PriceModifier * penStorePrice) * numberOfDeals);
+        }
+
+        [Test]
+        public async Task PercentDiscountWithWeight()
+        {
+            Assert.IsTrue(false);
+        }
+
+        [Test]
+        public async Task AddingMultipleWeightsOfTheSameShouldJoinIntoOneOnItemizedList()
+        {
+            Assert.IsTrue(false);
+        }
+
     }
 }
