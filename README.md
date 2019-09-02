@@ -16,6 +16,8 @@ special for three apples, it will apply when the third one is scanned
 9. I haven't seen any requirements on supporting a product to have more than one markdown at a time so I will
 not be supporting that.  I will be supporting multiple markdowns on separate products though (even though it didn't
 specify this, it makes sense to implement)
+10. In the documentation it says you will need to have a way to configure the prices.  I just put it in a "store".
+Later it could be moved out into a json or db.
 
 
 ## Notes along the way
@@ -40,3 +42,6 @@ project)
 
 6. Not exactly sure what this means "Markdown prices must always be used in favor of the per-unit price during the sale.
 There are laws protecting the customer from false advertising."
+
+Update: I think this answers my assumption from before.  This is a markdown and not a coupon.  I first thought they
+meant the same thing

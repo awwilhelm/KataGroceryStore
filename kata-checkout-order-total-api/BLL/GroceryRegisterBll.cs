@@ -96,9 +96,10 @@ namespace katacheckoutordertotalapi.BLL
                         numberOfDiscountReuse = (int)(lineItemsForDiscount.Count / discount.QuantityForDeal);
                     } else if(storeItem.StoreItemPriceType == StoreItemPriceType.perPound)
                     {
-                        numberOfDiscountReuse = (int)(lineItemsForDiscount
-                            .Where(x=>x.ItemIdentifier == discount.ItemIdentifier)
-                            .Sum(x=>x.WeightInPounds) / discount.QuantityForDeal);
+                        var totalWeightInPounds = lineItemsForDiscount
+                            .Where(x => x.ItemIdentifier == discount.ItemIdentifier)
+                            .Sum(x => x.WeightInPounds);
+                        numberOfDiscountReuse = (int)(totalWeightInPounds / discount.QuantityForDeal);
                     }
 
                     var numberOfUsesWithLimit = -1;
