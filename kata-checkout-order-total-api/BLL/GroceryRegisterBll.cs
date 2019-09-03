@@ -61,6 +61,11 @@ namespace katacheckoutordertotalapi.BLL
             return costs.CurrentRegisterLineItems;
         }
 
+        public async Task<decimal> GetTotalRegisterValue()
+        {
+            return costs.TotalRegisterValue;
+        }
+
         public async Task RecalculateRegisterValue()
         {
             decimal newCost = 0M;

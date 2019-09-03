@@ -214,6 +214,7 @@ namespace Tests
             Assert.IsTrue(Costs.DiscountValue == bananaStorePrice * itemDiscount.PriceModifier);
         }
 
+
         private async Task AddItemsToLineItems(Item item, int count)
         {
             for (var i = 0; i < count; i++)

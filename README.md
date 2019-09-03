@@ -1,4 +1,21 @@
-﻿## Assumptions
+﻿## Running tests in Visual Studio
+1. Open kata-checkout-order-total solution
+2. Go to kata-checkout-order-total-unit-tests
+3. Run all unit tests
+
+## Running tests
+1. Install Dotnet SDK
+2. Navigate to kata-checkout-order-total-unit-tests
+3. Run `dotnet test`
+
+## Connecting with the endpoints
+
+All of the functions that would be open to hit will be in kata-checkout-order-total-api/API.
+I have added a console project called kata-checkout-order-total if you want to try it out.
+You just need to create an instance of GroceryRegister and the rest is done for you.
+
+
+## Assumptions
 1. APIs use the same flow as REST APIs, however I can call it by a function instead of an endpoint
 2. Since we aren't using a database, I am going to use the tests to run the program (aka I'm not mocking endpoints)
 3. In normal grocery stores items are displayed in order of being scanned.  

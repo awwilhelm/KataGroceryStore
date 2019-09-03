@@ -28,5 +28,10 @@ namespace katacheckoutordertotalapi.API
         {
             return await groceryRegisterBll.GetRegisterLineItems();
         }
+
+        public async Task<decimal> GetTotalRegisterValue()
+        {
+            return await groceryRegisterBll.GetTotalRegisterValue();
+        }
     }
 }
